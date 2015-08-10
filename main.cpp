@@ -19,6 +19,7 @@ int main(int argc, char **argv)
             DWORD Flags;
             DWORD RecvBytes;
             DWORD SendBytes;
+  std::cout << "test1" << std::endl;
 
   return 0;
 }
