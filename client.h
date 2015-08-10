@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 
-__declspec(dllexport) void hello(void);
+extern "C" void hello(void);
 
 class Client
 {
