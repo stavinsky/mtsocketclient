@@ -1,18 +1,17 @@
-LIBS += -lws2_32
+LIBS += -lws2_32 -lstdc++
 LIBS += -static-libgcc 
 RM = rm -f 
-CPP += client.cpp main.cpp
-OBJ += client.o main.o
+SRC += client.cpp main.cpp
+OBJ = $(SRC:.cpp=.o)
 BIN      = winsock_tst
-CXXFLAGS = $(CXXINCS) -m32 -std=c++11
-CFLAGS   = $(INCS) -m32 -std=c++11
+CXXFLAGS = -m32 -std=c++11 #-Wall
 CPP      = g++.exe
 CC       = gcc.exe
-
+DLL = client.dll
 all: $(BIN)
 
 $(BIN): $(OBJ)
-	$(CPP) $(OBJ) $(LIBS) -o $(BIN)
+	$(CPP) $(OBJ)  -o $(BIN) $(LIBS)
 	
 client.o: client.cpp
 	$(CPP) -c client.cpp -o client.o $(CXXFLAGS)
@@ -21,6 +20,8 @@ main.o: main.cpp
 	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
 				
 clean: 
-	${RM} $(OBJ) $(BIN)
+	${RM} $(OBJ) $(BIN) $(DLL)
 	
+dll: client.o
+	gcc -shared   -o $(DLL) client.o $(LIBS)
 .PHONY: all clean 

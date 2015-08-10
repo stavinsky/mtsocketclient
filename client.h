@@ -4,6 +4,9 @@
 #include <ws2tcpip.h>
 #include <stdio.h>
 #include <iostream>
+
+__declspec(dllexport) void hello(void);
+
 class Client
 {
 	Client(const char* addr, const char* port);

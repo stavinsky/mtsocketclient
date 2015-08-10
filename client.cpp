@@ -76,4 +76,7 @@ void Client::loop()
 	}
 }
 
-
+void hello(void)
+{
+	std::cout << " hello world" << std::endl;
+}
