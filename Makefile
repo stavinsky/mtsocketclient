@@ -1,5 +1,6 @@
-LIBS += -lws2_32 -lstdc++
+LIBS += -lws2_32 #-lstdc++
 LIBS += -static-libgcc 
+LIBS += -static-libstdc++
 RM = rm -f 
 SRC += client.cpp main.cpp
 OBJ = $(SRC:.cpp=.o)

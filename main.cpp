@@ -9,8 +9,8 @@
  
 int main(int argc, char **argv)
 {
-
-  std::cout << "test1" << std::endl;
+  hello();
+  std::cout << "test" << std::endl;
 
   return 0;
 }
