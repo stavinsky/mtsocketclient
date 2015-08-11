@@ -9,10 +9,11 @@
  
 int main(int argc, char **argv)
 {
-  hello();
-  std::cout << "test" << std::endl;
+    Client client("127.0.0.1", "9999");
+    client.loop();
+    std::cout << "test" << std::endl;
 
-  return 0;
+    return 0;
 }
  
 

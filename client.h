@@ -9,14 +9,16 @@ extern "C" void hello(void);
 
 class Client
 {
-	Client(const char* addr, const char* port);
+public:
+    Client(const char* addr, const char* port);
 	~Client();
 	void loop();
 	void error(const char * msg);
 	SOCKET client_socket;
-	WSAEVENT event;
+
 	WSADATA wsaData;
 	WSANETWORKEVENTS hProcessEvent;
+    int err = 0;
 };
 
  
