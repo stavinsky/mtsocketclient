@@ -4,7 +4,8 @@
 #include <ws2tcpip.h>
 #include <stdio.h>
 #include <iostream>
-
+#include <queue>
+#include <string>
 
 extern "C" void hello(void);
 
@@ -27,6 +28,7 @@ public:
     char read_buffer[DATA_BUFSIZE];
 	WSADATA wsaData;
 	WSANETWORKEVENTS hProcessEvent;
-    int err;
+    int status;
+    std::queue<std::string> msg_queue;
 };
 

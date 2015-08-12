@@ -2,7 +2,7 @@
 void Client::error(const char * msg = "")
 {
     printf("WSA failed with error%s %d\n", msg, WSAGetLastError());
-    err = 1;
+    status = 1;
 	
 }
 Client::Client(const char* addr, const char* port)
@@ -10,8 +10,9 @@ Client::Client(const char* addr, const char* port)
     struct addrinfo *result = NULL;
     struct addrinfo *ptr = NULL;
     struct addrinfo hints;
-    err = 0;
+    status = 0;
 	int iResult;
+
 	iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
     if (iResult != 0)
         {
@@ -67,12 +68,20 @@ int Client::do_read()
         result[bytes_received]='\0';
 
         handle_read(result);
+        msg_queue.push(result);
+
+
     }
 }
 
 int Client::do_write()
 {
-    std::cout << "write" << std::endl;
+    int ret=0;
+    const char *buffer = msg_queue.front().c_str();
+    ret=send(client_socket, buffer,  strlen(buffer),0);
+//    std::cout<<sizeof(msg_queue.front().c_str())<<std::endl;
+    msg_queue.pop();
+
 }
 int Client::handle_read(char *buffer)
 {
@@ -89,18 +98,25 @@ void Client::loop()
     WSAEVENT event = WSA_INVALID_EVENT;
     event = WSACreateEvent();
     std::cout << "connected"  <<std::endl;
+    bool can_write=FALSE;
     ::WSAEventSelect(client_socket, event, FD_WRITE | FD_READ | FD_CLOSE);
     while(TRUE)
     {
 
         //std::cout << count++ << std::endl;
-        if(err!=0)
-            do_close();
+        if(status!=0)
+            break;
 		DWORD ret;
 
+
+        if((can_write ==TRUE)&& (msg_queue.size() > 0))
+        {
+
+            do_write();
+        }
         WSANETWORKEVENTS NetworkEvents;
 
-        ret = WSAWaitForMultipleEvents(1, &event, FALSE, WSA_INFINITE, FALSE);
+        ret = WSAWaitForMultipleEvents(1, &event, FALSE, 5, FALSE);
         if((ret == WSA_WAIT_FAILED) || (ret == WSA_WAIT_TIMEOUT))
         {
             continue;
@@ -114,14 +130,16 @@ void Client::loop()
             {
                 do_read();
             }
-            if( NetworkEvents.lNetworkEvents & FD_CLOSE )
+            if(( NetworkEvents.lNetworkEvents & FD_CLOSE ) || NetworkEvents.iErrorCode[FD_CLOSE_BIT !=0 ])
             {
+
                 do_close();
             }
             if((NetworkEvents.lNetworkEvents & FD_WRITE) &&
                     (NetworkEvents.iErrorCode[FD_WRITE_BIT] == 0))
             {
-                do_write();
+
+                can_write = TRUE;
             }
 
 
@@ -131,6 +149,9 @@ void Client::loop()
 }
 void Client::do_close()
 {
+    closesocket(client_socket);
+    status=1;
+    std::cout << "close"<< std::endl;
     WSACleanup();
 }
 
