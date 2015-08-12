@@ -1,5 +1,4 @@
 #include "client.h"
-#include "mystrings.cpp"
 void Client::error(const char * msg = "")
 {
     printf("WSA failed with error%s %d\n", msg, WSAGetLastError());
@@ -58,16 +57,24 @@ Client::Client(const char* addr, const char* port)
 }
 int Client::do_read()
 {
-    int bytes_received;
+    int bytes_received=0;
     bytes_received = recv(client_socket, read_buffer, sizeof(read_buffer), 0);
     if(bytes_received > 0)
     {
+        char result[bytes_received];
+        memset(result, 0, bytes_received);
+        strncpy(result, read_buffer, bytes_received);
+        result[bytes_received]='\0';
 
-        read_handle(str_cut(read_buffer, bytes_received));
+        handle_read(result);
     }
 }
 
-int Client::read_handle(char *buffer)
+int Client::do_write()
+{
+    std::cout << "write" << std::endl;
+}
+int Client::handle_read(char *buffer)
 {
     std::cout<<buffer<<std::endl;
     return 0;
@@ -79,7 +86,6 @@ int Client::write_handle()
 
 void Client::loop()
 {
-    int count = 0;
     WSAEVENT event = WSA_INVALID_EVENT;
     event = WSACreateEvent();
     std::cout << "connected"  <<std::endl;
@@ -89,7 +95,7 @@ void Client::loop()
 
         //std::cout << count++ << std::endl;
         if(err!=0)
-            break;
+            do_close();
 		DWORD ret;
 
         WSANETWORKEVENTS NetworkEvents;
@@ -105,17 +111,31 @@ void Client::loop()
 
             if( (NetworkEvents.lNetworkEvents & FD_READ) &&
                 (NetworkEvents.iErrorCode[FD_READ_BIT] == 0) )
-				{
-                    do_read();
-				}
+            {
+                do_read();
+            }
+            if( NetworkEvents.lNetworkEvents & FD_CLOSE )
+            {
+                do_close();
+            }
+            if((NetworkEvents.lNetworkEvents & FD_WRITE) &&
+                    (NetworkEvents.iErrorCode[FD_WRITE_BIT] == 0))
+            {
+                do_write();
+            }
+
 
         }
 
 	}
 }
-Client::~Client()
+void Client::do_close()
 {
     WSACleanup();
+}
+
+Client::~Client()
+{
 
 }
 

@@ -16,9 +16,12 @@ public:
 	void loop();
 	void error(const char * msg);
 
-    int read_handle(char * buffer);
+    int handle_read(char * buffer);
     int write_handle();
     int do_read();
+    int do_write();
+    void do_close();
+    int handle_close();
 
 	SOCKET client_socket;
     char read_buffer[DATA_BUFSIZE];

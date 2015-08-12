@@ -4,7 +4,7 @@ SET(CMAKE_TOOLCHAIN_FILE mingw.txt)
 
 
 add_library(client STATIC client.cpp )
-add_library(mystrings STATIC )
+
 target_link_libraries( client ws2_32 )
 add_executable(main main.cpp)
 
