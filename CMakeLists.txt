@@ -7,7 +7,9 @@ add_library(client STATIC client.cpp )
 
 target_link_libraries( client ws2_32 )
 add_executable(main main.cpp)
-
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#set_property(TARGET main PROPERTY CXX_STANDARD 11)
+#set_property(TARGET main PROPERTY CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_FLAGS "-static-libgcc -static-libstdc++ -O3 -s")
 SET(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "-static-libgcc -static-libstdc++ -static -O3 -s")
 target_link_libraries(main client )
