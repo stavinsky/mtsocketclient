@@ -1,9 +1,10 @@
 #define PORT 9999
-#define DATA_BUFSIZE 8192
+#define DATA_BUFSIZE 5
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <stdio.h>
 #include <iostream>
+
 
 extern "C" void hello(void);
 
@@ -14,19 +15,15 @@ public:
 	~Client();
 	void loop();
 	void error(const char * msg);
-	SOCKET client_socket;
 
+    int read_handle(char * buffer);
+    int write_handle();
+    int do_read();
+
+	SOCKET client_socket;
+    char read_buffer[DATA_BUFSIZE];
 	WSADATA wsaData;
 	WSANETWORKEVENTS hProcessEvent;
-    int err = 0;
+    int err;
 };
 
- 
-
-typedef struct _SOCKET_INFORMATION {
-   CHAR Buffer[DATA_BUFSIZE];
-   WSABUF DataBuf;
-   SOCKET Socket;
-   DWORD BytesSEND;
-   DWORD BytesRECV;
-} SOCKET_INFORMATION, * LPSOCKET_INFORMATION;

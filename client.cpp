@@ -1,5 +1,5 @@
 #include "client.h"
-
+#include "mystrings.cpp"
 void Client::error(const char * msg = "")
 {
     printf("WSA failed with error%s %d\n", msg, WSAGetLastError());
@@ -11,7 +11,7 @@ Client::Client(const char* addr, const char* port)
     struct addrinfo *result = NULL;
     struct addrinfo *ptr = NULL;
     struct addrinfo hints;
-    
+    err = 0;
 	int iResult;
 	iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
     if (iResult != 0)
@@ -50,28 +50,51 @@ Client::Client(const char* addr, const char* port)
 //    if (client_socket == INVALID_SOCKET)
 //    {
 //        error();
-//        WSACleanup();
+//
 //        return ;
 //    }
 
     
 }
+int Client::do_read()
+{
+    int bytes_received;
+    bytes_received = recv(client_socket, read_buffer, sizeof(read_buffer), 0);
+    if(bytes_received > 0)
+    {
 
+        read_handle(str_cut(read_buffer, bytes_received));
+    }
+}
+
+int Client::read_handle(char *buffer)
+{
+    std::cout<<buffer<<std::endl;
+    return 0;
+}
+int Client::write_handle()
+{
+
+}
 
 void Client::loop()
 {
+    int count = 0;
     WSAEVENT event = WSA_INVALID_EVENT;
     event = WSACreateEvent();
-    WSANETWORKEVENTS NetworkEvents;
-    ::WSAEventSelect(client_socket, event, FD_WRITE | FD_READ | FD_CLOSE);
     std::cout << "connected"  <<std::endl;
+    ::WSAEventSelect(client_socket, event, FD_WRITE | FD_READ | FD_CLOSE);
     while(TRUE)
     {
+
+        //std::cout << count++ << std::endl;
         if(err!=0)
             break;
 		DWORD ret;
 
-        ret = WSAWaitForMultipleEvents(0, &event, FALSE, WSA_INFINITE, FALSE);
+        WSANETWORKEVENTS NetworkEvents;
+
+        ret = WSAWaitForMultipleEvents(1, &event, FALSE, WSA_INFINITE, FALSE);
         if((ret == WSA_WAIT_FAILED) || (ret == WSA_WAIT_TIMEOUT))
         {
             continue;
@@ -81,15 +104,10 @@ void Client::loop()
             ::WSAEnumNetworkEvents(client_socket,   event, &NetworkEvents);
 
             if( (NetworkEvents.lNetworkEvents & FD_READ) &&
-				(NetworkEvents.iErrorCode[FD_ACCEPT_BIT] == 0) )
+                (NetworkEvents.iErrorCode[FD_READ_BIT] == 0) )
 				{
-					std::cout<<"read"<<std::endl;
+                    do_read();
 				}
-            if((NetworkEvents.lNetworkEvents & FD_CLOSE))
-                {
-
-                    error("close");
-                }
 
         }
 
@@ -97,7 +115,8 @@ void Client::loop()
 }
 Client::~Client()
 {
-    std::cout << "destructor" << std::endl;
+    WSACleanup();
+
 }
 
 void hello(void)
