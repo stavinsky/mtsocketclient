@@ -5,7 +5,7 @@ RM = rm -f
 SRC += client.cpp main.cpp
 OBJ = $(SRC:.cpp=.o)
 BIN      = winsock_tst.exe
-CXXFLAGS = -m32 -std=c++11 -Wall
+CXXFLAGS = -m32 -std=c++11 -Wall -lpthreads
 CPP      = i686-w64-mingw32-g++
 CC       = i686-w64-mingw32-gcc
 DLL = client.dll
