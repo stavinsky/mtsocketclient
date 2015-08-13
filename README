@@ -1,5 +1,5 @@
 Compilation:
-
+--enable-threads=winpthreads
 OS X:
 
 mkdir build

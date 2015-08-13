@@ -9,8 +9,9 @@
 int main(int argc, char **argv)
 {
     Client client("127.0.0.1", "9999");
-    std::thread t(client.loop());
-    std::cout << "test" << std::endl;
+    std::thread t(&Client::loop, &client);
+    t.join();
+    std::cout << "finish" << std::endl;
 
     return 0;
 }
