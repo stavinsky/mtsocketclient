@@ -6,7 +6,7 @@
 #include <iostream>
 #include <queue>
 #include <string>
-
+#include "safequeue.cpp"
 extern "C" void hello(void);
 
 class Client
@@ -29,6 +29,6 @@ public:
 	WSADATA wsaData;
 	WSANETWORKEVENTS hProcessEvent;
     int status;
-    std::queue<std::string> msg_queue;
+    SafeQueue<std::string> msg_queue;
 };
 

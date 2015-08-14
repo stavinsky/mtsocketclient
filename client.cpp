@@ -1,4 +1,5 @@
 #include "client.h"
+
 void Client::error(const char * msg = "")
 {
     printf("WSA failed with error%s %d\n", msg, WSAGetLastError());
@@ -68,7 +69,7 @@ int Client::do_read()
         result[bytes_received]='\0';
 
         handle_read(result);
-        msg_queue.push(result);
+        msg_queue.enqueue(result);
 
 
     }
@@ -77,10 +78,10 @@ int Client::do_read()
 int Client::do_write()
 {
     int ret=0;
-    const char *buffer = msg_queue.front().c_str();
+    const char *buffer = msg_queue.dequeue().c_str();
     ret=send(client_socket, buffer,  strlen(buffer),0);
 //    std::cout<<sizeof(msg_queue.front().c_str())<<std::endl;
-    msg_queue.pop();
+
 
 }
 int Client::handle_read(char *buffer)
@@ -109,7 +110,7 @@ void Client::loop()
 		DWORD ret;
 
 
-        if((can_write ==TRUE)&& (msg_queue.size() > 0))
+        if((can_write ==TRUE)&& (!msg_queue.empty() ))
         {
 
             do_write();
