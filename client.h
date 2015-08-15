@@ -1,13 +1,14 @@
+#ifndef CLIENT_H
+#define CLIENT_H
 #define PORT 9999
 #define DATA_BUFSIZE 5
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <stdio.h>
-#include <iostream>
 #include <queue>
 #include <string>
 #include "safequeue.cpp"
-extern "C" void hello(void);
+#include <thread>
 
 class Client
 {
@@ -17,18 +18,21 @@ public:
 	void loop();
 	void error(const char * msg);
 
-    int handle_read(char * buffer);
-    int write_handle();
+    void handle_read();
+    void write_handle();
     int do_read();
     int do_write();
     void do_close();
     int handle_close();
+    void thread_loop();
 
 	SOCKET client_socket;
     char read_buffer[DATA_BUFSIZE];
 	WSADATA wsaData;
 	WSANETWORKEVENTS hProcessEvent;
     int status;
-    SafeQueue<std::string> msg_queue;
+    SafeQueue<std::string> send_queue;
+    SafeQueue<std::string> recv_queue;
 };
 
+#endif

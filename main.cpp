@@ -1,16 +1,22 @@
-#include <stdio.h>
-#include "client.h"
-#include <thread>
+#include <iostream>
+#include "windows.h"
 
 
- 
+
 int main(int argc, char **argv)
 {
-    Client client("127.0.0.1", "9999");
-    std::thread t(&Client::loop, &client);
-    t.join();
-//    client.loop();
-    std::cout << "finish" << std::endl;
+    HINSTANCE dllHandle = NULL;
+    dllHandle = LoadLibrary("libmtsocket.dll");
+    if (NULL != dllHandle)
+    {
+        std::cout << "loaded"<<std::endl;
+        typedef int(*pfunc)(char*, char*);
+        pfunc  mtconnect;
+        mtconnect = (pfunc)GetProcAddress(dllHandle,"mtconnect");
+        mtconnect("127.0.0.1", "9999");
+
+    }
+
 
     return 0;
 }

@@ -68,8 +68,9 @@ int Client::do_read()
         strncpy(result, read_buffer, bytes_received);
         result[bytes_received]='\0';
 
-        handle_read(result);
-        msg_queue.enqueue(result);
+        recv_queue.enqueue(result);
+        handle_read();
+
 
 
     }
@@ -78,39 +79,41 @@ int Client::do_read()
 int Client::do_write()
 {
     int ret=0;
-    const char *buffer = msg_queue.dequeue().c_str();
+    const char *buffer = send_queue.dequeue().c_str();
     ret=send(client_socket, buffer,  strlen(buffer),0);
-//    std::cout<<sizeof(msg_queue.front().c_str())<<std::endl;
 
 
 }
-int Client::handle_read(char *buffer)
-{
-    std::cout<<buffer<<std::endl;
-    return 0;
-}
-int Client::write_handle()
+void Client::handle_read()
 {
 
+}
+void Client::write_handle()
+{
+
+}
+
+void Client::thread_loop(void)
+{
+    std::thread t(&Client::loop, this);
+    t.join();
 }
 
 void Client::loop()
 {
     WSAEVENT event = WSA_INVALID_EVENT;
     event = WSACreateEvent();
-    std::cout << "connected"  <<std::endl;
     bool can_write=FALSE;
     ::WSAEventSelect(client_socket, event, FD_WRITE | FD_READ | FD_CLOSE);
     while(TRUE)
     {
 
-        //std::cout << count++ << std::endl;
         if(status!=0)
             break;
 		DWORD ret;
 
 
-        if((can_write ==TRUE)&& (!msg_queue.empty() ))
+        if((can_write ==TRUE)&& (!send_queue.empty() ))
         {
 
             do_write();
@@ -152,7 +155,6 @@ void Client::do_close()
 {
     closesocket(client_socket);
     status=1;
-    std::cout << "close"<< std::endl;
     WSACleanup();
 }
 
@@ -161,7 +163,3 @@ Client::~Client()
 
 }
 
-void hello(void)
-{
-	std::cout << " hello world" << std::endl;
-}
