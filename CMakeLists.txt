@@ -1,8 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 SET(CMAKE_TOOLCHAIN_FILE mingw.txt)
 
-SET(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++  -O3 -s -Wall")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++  -O3 -s -Wall")
+SET(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++  -static -O3 -s -Wall")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static -O3 -s -Wall")
 
 set(_REQUIRED_INCLUDES Winsock2.h)
 set(_REQUIRED_LIBRARIES WS2_32.lib WSock32.lib)
