@@ -1,11 +1,14 @@
 #include "client.h"
-
-void Client::error(const char * msg = "")
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdio.h>
+#include <thread>
+void Client::error()
 {
-    printf("WSA failed with error%s %d\n", msg, WSAGetLastError());
+    printf("WSA failed with error %d\n", WSAGetLastError());
     status = 1;
-	
 }
+
 Client::Client(const char* addr, const char* port)
 {
     struct addrinfo *result = NULL;
@@ -54,10 +57,10 @@ Client::Client(const char* addr, const char* port)
 //
 //        return ;
 //    }
-
     
 }
-int Client::do_read()
+
+void Client::do_read()
 {
     int bytes_received=0;
     bytes_received = recv(client_socket, read_buffer, sizeof(read_buffer), 0);
@@ -70,20 +73,20 @@ int Client::do_read()
 
         recv_queue.enqueue(result);
         handle_read();
-
-
-
     }
 }
 
-int Client::do_write()
+void Client::do_write()
 {
+    if (send_queue.empty())
+        return;
     int ret=0;
     const char *buffer = send_queue.dequeue().c_str();
     ret=send(client_socket, buffer,  strlen(buffer),0);
+    if(ret == SOCKET_ERROR)
+        error();
     handle_write();
-
-
+    return;
 }
 void Client::handle_read()
 {
@@ -114,11 +117,9 @@ void Client::loop()
 		DWORD ret;
 
 
-        if((can_write ==TRUE)&& (!send_queue.empty() ))
-        {
-
+        if(can_write ==TRUE)
             do_write();
-        }
+
         WSANETWORKEVENTS NetworkEvents;
 
         ret = WSAWaitForMultipleEvents(1, &event, FALSE, 5, FALSE);
@@ -151,6 +152,27 @@ void Client::loop()
         }
 
 	}
+}
+
+void Client::put(std::string string)
+{
+    send_queue.enqueue(string);
+}
+
+std::string Client::get()
+{
+    return recv_queue.dequeue();
+}
+bool Client::empty()
+/*
+ * return TRUE if recv_queue is empry
+ *
+ */
+{
+    if(recv_queue.empty())
+        return TRUE;
+    else
+        return FALSE;
 }
 void Client::do_close()
 {

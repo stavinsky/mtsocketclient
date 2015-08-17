@@ -10,7 +10,7 @@ void mtconnect(const char* addr, const char* port)
     
     client = new MtSocket(addr, port);
 
-    client->send_queue.enqueue("buffer");
+
     client->thread_loop();
 //    delete client;
 }
@@ -18,19 +18,19 @@ void mtconnect(const char* addr, const char* port)
 
 int get_data(char * buffer)
 {
-//    if(!client->recv_queue.empty())
-//    {
-//        strcpy(buffer, client->recv_queue.dequeue().c_str());
-//        return 0;
-//    }
-//    else
-//        return 1;
+    if(!client->empty())
+    {
+        strcpy(buffer, client->get().c_str());
+        return 0;
+    }
+    else
+        return 1;
 }
 
 int send_data(const char * buffer)
 {
-//    client->send_queue.enqueue(buffer);
-//    return 0;
+    client->put("buffer");
+    return 0;
 }
 
 void mtdisconnect()
