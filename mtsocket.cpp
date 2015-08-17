@@ -1,18 +1,18 @@
 #include "mtsocket.h"
 
 
-
+MtSocket *client = NULL;
 
 
 
 void mtconnect(const char* addr, const char* port)
 {
-    MtSocket *client = NULL;
+    
     client = new MtSocket(addr, port);
 
     client->send_queue.enqueue("buffer");
     client->thread_loop();
-    delete client;
+//    delete client;
 }
 
 
@@ -35,7 +35,7 @@ int send_data(const char * buffer)
 
 void mtdisconnect()
 {
-//    delete client;
+    delete client;
 }
 
 

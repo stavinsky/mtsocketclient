@@ -2,10 +2,10 @@
 #define MTSOCKET_H
 #include "client.h"
 
-extern "C" void mtconnect(const char* addr, const char* port);
-extern "C" int get_data(char* buffer);
-extern "C" int send_data(const char* buffer);
-extern "C" void mtdisconnect();
+extern "C" __declspec(dllexport) void mtconnect(const char* addr, const char* port);
+extern "C" __declspec(dllexport) int get_data(char* buffer);
+extern "C" __declspec(dllexport) int send_data(const char* buffer);
+extern "C" __declspec(dllexport) void mtdisconnect();
 
 class MtSocket: public Client
 {

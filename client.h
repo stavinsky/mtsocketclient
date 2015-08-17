@@ -19,7 +19,7 @@ public:
 	void error(const char * msg);
 
     void handle_read();
-    void write_handle();
+    void handle_write();
     int do_read();
     int do_write();
     void do_close();

@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     if (NULL != dllHandle)
     {
         std::cout << "loaded"<<std::endl;
-        typedef int(*pfunc)(char*, char*);
+        typedef int(*pfunc)(const char*, const char*);
         pfunc  mtconnect;
         mtconnect = (pfunc)GetProcAddress(dllHandle,"mtconnect");
         mtconnect("127.0.0.1", "9999");

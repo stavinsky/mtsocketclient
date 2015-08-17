@@ -39,7 +39,7 @@ public:
   bool empty(void)
   {
       bool ret;
-      std::unique_lock<std::mutex> lock(m);
+      std::lock_guard<std::mutex> lock(m);
       ret = q.empty();
       return ret;
   }

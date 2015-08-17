@@ -81,6 +81,7 @@ int Client::do_write()
     int ret=0;
     const char *buffer = send_queue.dequeue().c_str();
     ret=send(client_socket, buffer,  strlen(buffer),0);
+    handle_write();
 
 
 }
@@ -88,7 +89,7 @@ void Client::handle_read()
 {
 
 }
-void Client::write_handle()
+void Client::handle_write()
 {
 
 }
