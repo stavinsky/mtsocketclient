@@ -12,7 +12,7 @@ public:
     Client(const char* addr, const char* port);
     ~Client();
 	void loop();
-    void thread_loop();
+    void threaded_loop();
 
     void handle_read();
     void handle_write();

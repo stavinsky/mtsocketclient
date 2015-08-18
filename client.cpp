@@ -66,12 +66,8 @@ void Client::do_read()
     bytes_received = recv(client_socket, read_buffer, sizeof(read_buffer), 0);
     if(bytes_received > 0)
     {
-        char result[bytes_received];
-        memset(result, 0, bytes_received);
-        strncpy(result, read_buffer, bytes_received);
-        result[bytes_received]='\0';
-
-        recv_queue.enqueue(result);
+        std::string tmp(read_buffer, bytes_received);
+        recv_queue.enqueue(tmp);
         handle_read();
     }
 }
@@ -97,7 +93,7 @@ void Client::handle_write()
 
 }
 
-void Client::thread_loop(void)
+void Client::threaded_loop(void)
 {
     std::thread t(&Client::loop, this);
     t.join();

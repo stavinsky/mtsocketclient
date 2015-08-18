@@ -11,8 +11,7 @@ void mtconnect(const char* addr, const char* port)
     client = new MtSocket(addr, port);
 
 
-    client->thread_loop();
-//    delete client;
+    client->threaded_loop();
 }
 
 
@@ -29,7 +28,7 @@ int get_data(char * buffer)
 
 int send_data(const char * buffer)
 {
-    client->put("buffer");
+    client->put(buffer);
     return 0;
 }
 
