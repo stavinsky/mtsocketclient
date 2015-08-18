@@ -1,3 +1,9 @@
+This is a test project. Here you can find how to use winapi to write pure socket application on windows. Also you can find sample of using std::thread, non-blocking sockets. 
+Project compiles on windows, but I used OS X to develop, so I made cross compilation. 
+You can use this code as you want
+
+
+
 Compilation:
 --enable-threads=winpthreads
 OS X:
