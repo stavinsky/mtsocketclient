@@ -85,7 +85,7 @@ int Client::do_connect(const char* addr, const char * port)
 void Client::do_read()
 {
     int bytes_received=0;
-    bytes_received = recv(client_socket, read_buffer, sizeof(read_buffer), 0);
+    bytes_received = recv(client_socket, read_buffer, DATA_BUFSIZE, 0);
     if(bytes_received > 0)
     {
         std::string tmp(read_buffer, bytes_received);
@@ -99,7 +99,8 @@ void Client::do_write()
     if (send_queue.empty())
         return;
     int ret=0;
-    const char *buffer = send_queue.dequeue().c_str();
+    char buffer[DATA_BUFSIZE];
+    strcpy(buffer, send_queue.dequeue().c_str());
     ret=send(client_socket, buffer,  strlen(buffer),0);
     if(ret == SOCKET_ERROR)
         error();
