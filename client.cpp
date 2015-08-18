@@ -107,49 +107,46 @@ void Client::loop()
 {
     WSAEVENT event = WSA_INVALID_EVENT;
     event = WSACreateEvent();
-    bool can_write=FALSE;
+    bool can_write=false;
+    unsigned int ret;
     ::WSAEventSelect(client_socket, event, FD_WRITE | FD_READ | FD_CLOSE);
-    while(TRUE)
+    while(true)
     {
 
         if(status!=0)
             break;
-		DWORD ret;
 
-
-        if(can_write ==TRUE)
+        if(can_write == true )
             do_write();
 
         WSANETWORKEVENTS NetworkEvents;
 
         ret = WSAWaitForMultipleEvents(1, &event, FALSE, 5, FALSE);
-        if((ret == WSA_WAIT_FAILED) || (ret == WSA_WAIT_TIMEOUT))
+        if( ret == WSA_WAIT_FAILED )
         {
-            continue;
+            error();
+            break;
         }
-        if(ret >= 0)
+
+        ::WSAEnumNetworkEvents(client_socket,   event, &NetworkEvents);
+
+        if( (NetworkEvents.lNetworkEvents & FD_READ) &&
+            (NetworkEvents.iErrorCode[FD_READ_BIT] == 0) )
         {
-            ::WSAEnumNetworkEvents(client_socket,   event, &NetworkEvents);
-
-            if( (NetworkEvents.lNetworkEvents & FD_READ) &&
-                (NetworkEvents.iErrorCode[FD_READ_BIT] == 0) )
-            {
-                do_read();
-            }
-            if(( NetworkEvents.lNetworkEvents & FD_CLOSE ) || NetworkEvents.iErrorCode[FD_CLOSE_BIT !=0 ])
-            {
-
-                do_close();
-            }
-            if((NetworkEvents.lNetworkEvents & FD_WRITE) &&
-                    (NetworkEvents.iErrorCode[FD_WRITE_BIT] == 0))
-            {
-
-                can_write = TRUE;
-            }
-
-
+            do_read();
         }
+        if(( NetworkEvents.lNetworkEvents & FD_CLOSE ) || NetworkEvents.iErrorCode[FD_CLOSE_BIT !=0 ])
+        {
+            do_close();
+        }
+        if((NetworkEvents.lNetworkEvents & FD_WRITE) &&
+                (NetworkEvents.iErrorCode[FD_WRITE_BIT] == 0))
+        {
+
+            can_write = true;
+        }
+
+
 
 	}
 }
@@ -165,14 +162,11 @@ std::string Client::get()
 }
 bool Client::empty()
 /*
- * return TRUE if recv_queue is empry
+ * return true if recv_queue is empry
  *
  */
 {
-    if(recv_queue.empty())
-        return TRUE;
-    else
-        return FALSE;
+return recv_queue.empty();
 }
 void Client::do_close()
 {
