@@ -24,7 +24,7 @@ public:
 
 
 private:
-
+    int do_connect(const char* addr, const char * port);
     void do_read();
     void do_write();
     void do_close();
