@@ -4,10 +4,13 @@
 #include <Winerror.h>
 #include <stdio.h>
 #include <thread>
+
+
 void Client::error()
 {
     int error_number = WSAGetLastError();
     char windows_error_text[100];
+    char message[1024];
     ::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,                 // It´s a system error
                          NULL,                                      // No string to be formatted needed
                          error_number,                               // Hey Windows: Please explain this error!
@@ -15,21 +18,24 @@ void Client::error()
                          windows_error_text,              // Put the message here
                          99,                     // Number of bytes to store the message
                          NULL);
-    printf("%d - %s", error_number, windows_error_text);
+
+    snprintf(message, sizeof(message), "%d - %s", error_number, windows_error_text);
+    logger.log(message);
     status = 1;
 }
 
-Client::Client(const char* addr, const char* port)
+Client::Client(const char* addr, const char* port):
+    logger("logfile.txt")
 {
 
     status = 0;
-
+    logger.log("constructor");
     if (0 != WSAStartup(MAKEWORD(2,2), &wsaData))
     {
         error();
         return ;
     }
-
+    logger.log("wsa started");
     if(0 != do_connect(addr, port))
     {
         error();
@@ -41,7 +47,9 @@ Client::Client(const char* addr, const char* port)
 }
 
 int Client::do_connect(const char* addr, const char * port)
-{
+{   char message[1024];
+    snprintf(message, sizeof(message), "connect to %s:%s", addr, port);
+    logger.log(message);
     struct addrinfo *result = NULL;
     struct addrinfo *ptr = NULL;
     struct addrinfo hints;
@@ -77,6 +85,7 @@ int Client::do_connect(const char* addr, const char * port)
     {
         return -1;
     }
+    logger.log("connected");
     return 0;
 }
 
@@ -124,6 +133,7 @@ void Client::threaded_loop(void)
 
 void Client::loop()
 {
+
     WSAEVENT event = WSA_INVALID_EVENT;
     event = WSACreateEvent();
     bool can_write=false;
@@ -133,8 +143,8 @@ void Client::loop()
     {
 
         if(status!=0)
+            do_close();
             break;
-
         if(can_write == true )
             do_write();
 
@@ -189,6 +199,7 @@ return recv_queue.empty();
 }
 void Client::do_close()
 {
+
     closesocket(client_socket);
     status=1;
     WSACleanup();
