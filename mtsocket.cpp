@@ -17,21 +17,22 @@ void mtconnect(const wchar_t * addr, const wchar_t * port)
     std::string st_port(ws_port.begin(), ws_port.end());
     client = new MtSocket(st_addr.c_str(), st_port.c_str());
     t = new std::thread(&client->loop, client);
-
-
-
 }
 
-
-int get_data(char * buffer)
+int get_data(wchar_t * buffer)
 {
+    std::string str;
+
     if(1 == client->status)
     {
         return -1;
     }
     if(!client->empty())
     {
-        strcpy(buffer, client->get().c_str());
+        str = client->get();
+        std::wstring tmp(str.begin(), str.end());
+        wcscpy(buffer, tmp.c_str());
+        //strcpy(buffer, client->get().c_str());
         return 0;
     }
     else
@@ -54,8 +55,6 @@ int send_data(const wchar_t * wcharmsg)
 void mtdisconnect()
 {
     client->status = 1;
-    client->do_close();
-
     t->join();
     if(NULL != client)
     {

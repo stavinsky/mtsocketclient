@@ -4,6 +4,7 @@
 #include <Winerror.h>
 #include <stdio.h>
 #include <thread>
+#include <Mswsock.h>
 
 
 void Client::error()
@@ -133,7 +134,7 @@ void Client::threaded_loop(void)
 
 void Client::loop()
 {
-
+    logger.log("loop");
     WSAEVENT event = WSA_INVALID_EVENT;
     event = WSACreateEvent();
     bool can_write=false;
@@ -142,9 +143,11 @@ void Client::loop()
     while(true)
     {
 
+
         if(status!=0)
-            do_close();
+        {
             break;
+        }
         if(can_write == true )
             do_write();
 
@@ -166,7 +169,7 @@ void Client::loop()
         }
         if(( NetworkEvents.lNetworkEvents & FD_CLOSE ) || NetworkEvents.iErrorCode[FD_CLOSE_BIT !=0 ])
         {
-            do_close();
+            status = 1;
         }
         if((NetworkEvents.lNetworkEvents & FD_WRITE) &&
                 (NetworkEvents.iErrorCode[FD_WRITE_BIT] == 0))
@@ -174,10 +177,8 @@ void Client::loop()
 
             can_write = true;
         }
-
-
-
     }
+
 }
 
 void Client::put(std::string string)
@@ -195,17 +196,24 @@ bool Client::empty()
  *
  */
 {
-return recv_queue.empty();
+    return recv_queue.empty();
 }
-void Client::do_close()
-{
 
-    closesocket(client_socket);
-    status=1;
-    WSACleanup();
-}
 
 Client::~Client()
 {
+    char buffer[DATA_BUFSIZE];
+    u_long mode = 0;
+    ioctlsocket(client_socket, FIONBIO, &mode);
+    shutdown(client_socket, SD_SEND);
+    int res=0;
+    do
+    {
+        res = recv(client_socket, buffer, sizeof(buffer), 0);
+    } while(res!=0 && res!=SOCKET_ERROR);
 
+    closesocket(client_socket);
+    client_socket = INVALID_SOCKET;
+    logger.log("closed socket");
+    WSACleanup();
 }

@@ -3,7 +3,7 @@
 #include <string>
 
 typedef void(*Tmtconnect)( const wchar_t*,  const wchar_t *);
-typedef int(*Tget_data)(char * );
+typedef int(*Tget_data)(wchar_t * );
 typedef int(*Tsend_data)(const wchar_t *);
 typedef void(*Tmtdisconnect)();
 
@@ -27,19 +27,19 @@ int main(int argc, char **argv)
 
 
         mtconnect(L"127.0.0.1", L"9999");
-        char buffer[1024];
+        wchar_t buffer[1024];
         int res;
-//        while(true)
-//        {
-//            res = get_data(buffer);
-//            if(0 == res)
-//                if(-1 == send_data(buffer))
-//                    break;
-//            if (-1 == res)
-//                break;
+        while(true)
+        {
+            res = get_data(buffer);
+            if(0 == res)
+                if(-1 == send_data(buffer))
+                    break;
+            if (-1 == res)
+                break;
 
-//            Sleep(10);
-//        }
+            Sleep(10);
+        }
         std::cout << "mtdisconnect" << std::endl;
         mtdisconnect();
 

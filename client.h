@@ -19,7 +19,7 @@ public:
     void handle_write();
     void handle_close();
 
-    void do_close();
+
     std::string get();
     void put(std::string string);
     bool empty();

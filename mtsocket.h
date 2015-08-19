@@ -3,7 +3,7 @@
 #include "client.h"
 
 extern "C" __declspec(dllexport) void mtconnect(const wchar_t *, const wchar_t *);
-extern "C" __declspec(dllexport) int get_data(char* buffer);
+extern "C" __declspec(dllexport) int get_data(wchar_t *);
 extern "C" __declspec(dllexport) int send_data(const wchar_t *);
 extern "C" __declspec(dllexport) void mtdisconnect();
 
