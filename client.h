@@ -21,7 +21,7 @@ public:
     std::string get();
     void put(std::string string);
     bool empty();
-
+    int status;
 
 private:
     int do_connect(const char* addr, const char * port);
@@ -31,7 +31,7 @@ private:
     void error();
     SafeQueue<std::string> send_queue;
     SafeQueue<std::string> recv_queue;
-    int status;
+
 
     SOCKET client_socket;
     char read_buffer[DATA_BUFSIZE];
