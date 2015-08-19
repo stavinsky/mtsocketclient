@@ -2,9 +2,9 @@
 #include "windows.h"
 #include <string>
 
-typedef void(*Tmtconnect)(const char*, const char *);
+typedef void(*Tmtconnect)( const wchar_t*,  const wchar_t *);
 typedef int(*Tget_data)(char * );
-typedef int(*Tsend_data)(const char *);
+typedef int(*Tsend_data)(const wchar_t *);
 typedef void(*Tmtdisconnect)();
 
 int main(int argc, char **argv)
@@ -23,22 +23,24 @@ int main(int argc, char **argv)
         get_data = (Tget_data)GetProcAddress(dllHandle, "get_data");
         send_data= (Tsend_data)GetProcAddress(dllHandle, "send_data");
         mtdisconnect = (Tmtdisconnect)GetProcAddress(dllHandle, "mtdisconnect");
+        std::cout << "functions ready"<<std::endl;
 
 
-        mtconnect("127.0.0.1", "9999");
+        mtconnect(L"127.0.0.1", L"9999");
         char buffer[1024];
         int res;
-        while(true)
-        {
-            res = get_data(buffer);
-            if(0 == res)
-                if(-1 == send_data(buffer))
-                    break;
-            else if (-1 == res)
-                break;
+//        while(true)
+//        {
+//            res = get_data(buffer);
+//            if(0 == res)
+//                if(-1 == send_data(buffer))
+//                    break;
+//            if (-1 == res)
+//                break;
 
-            Sleep(10);
-        }
+//            Sleep(10);
+//        }
+        std::cout << "mtdisconnect" << std::endl;
         mtdisconnect();
 
     }

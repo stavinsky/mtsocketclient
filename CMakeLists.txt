@@ -11,15 +11,16 @@ set(CMAKE_REQUIRED_LIBRARIES ${_REQUIRED_LIBRARIES})
 
 find_package (Threads)
 
+add_library(logger STATIC logger.cpp)
+target_compile_features(logger PRIVATE cxx_range_for)
 
 add_library(safequeue STATIC safequeue.cpp )
 target_compile_features(safequeue PRIVATE cxx_range_for)
 
 
 add_library(client STATIC client.cpp )
-target_link_libraries(client ws2_32)
+target_link_libraries(client ws2_32 logger)
 target_compile_features(client PRIVATE cxx_range_for)
-
 
 
 

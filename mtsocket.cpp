@@ -1,17 +1,23 @@
 #include "mtsocket.h"
 #include <thread>
-
+#include <stdlib.h>
+#include <stdio.h>
 MtSocket *client = NULL;
 std::thread *t = NULL;
 
 
-void mtconnect(const char* addr, const char* port)
+void mtconnect(const wchar_t * addr, const wchar_t * port)
 {
-    if(client or t)
+    std::cout << "mtconnect"<<std::endl;
+    if(client || t)
         return;
-    client = new MtSocket(addr, port);
+    std::wstring ws_addr=addr;
+    std::wstring ws_port=port;
+    std::string st_addr(ws_addr.begin(), ws_addr.end());
+    std::string st_port(ws_port.begin(), ws_port.end());
+    client = new MtSocket(st_addr.c_str(), st_port.c_str());
     t = new std::thread(&client->loop, client);
-    //t.join();
+
 
 
 }
@@ -33,22 +39,34 @@ int get_data(char * buffer)
 
 }
 
-int send_data(const char * buffer)
+int send_data(const wchar_t * wcharmsg)
 {
     if(1 == client->status)
     {
         return -1;
     }
-    client->put(buffer);
+    std::wstring wmsg = wcharmsg;
+    std::string stmsg(wmsg.begin(), wmsg.end());
+    client->put(stmsg);
     return 0;
 }
 
 void mtdisconnect()
 {
-    if(client)
+    client->status = 1;
+    client->do_close();
+
+    t->join();
+    if(NULL != client)
+    {
         delete client;
-    if(t)
+        client = NULL;
+    }
+    if(NULL != t)
+    {
         delete t;
+        t = NULL;
+    }
 }
 
 

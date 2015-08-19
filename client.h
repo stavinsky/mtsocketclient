@@ -5,6 +5,7 @@
 #include <string>
 #include "safequeue.cpp"
 #include <winsock2.h>
+#include "logger.h"
 
 class Client
 {
@@ -18,6 +19,7 @@ public:
     void handle_write();
     void handle_close();
 
+    void do_close();
     std::string get();
     void put(std::string string);
     bool empty();
@@ -27,12 +29,12 @@ private:
     int do_connect(const char* addr, const char * port);
     void do_read();
     void do_write();
-    void do_close();
+
     void error();
     SafeQueue<std::string> send_queue;
     SafeQueue<std::string> recv_queue;
 
-
+    Logger logger;
     SOCKET client_socket;
     char read_buffer[DATA_BUFSIZE];
     WSADATA wsaData;
