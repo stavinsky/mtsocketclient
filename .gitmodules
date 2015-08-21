@@ -4,3 +4,6 @@
 [submodule "socket_client"]
 	path = socket_client
 	url = git@github.com:stavinsky/socket_client.git
+[submodule "clogger"]
+	path = clogger
+	url = git@github.com:stavinsky/clogger.git
