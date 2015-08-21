@@ -1,0 +1,3 @@
+[submodule "safequeue"]
+	path = safequeue
+	url = git@github.com:stavinsky/safe_queue.git
