@@ -7,7 +7,7 @@ typedef int(*Tget_data)(wchar_t * );
 typedef int(*Tsend_data)(const wchar_t *);
 typedef void(*Tmtdisconnect)();
 
-int main(int argc, char **argv)
+int main()
 {
     HINSTANCE dllHandle = NULL;
     dllHandle = LoadLibrary("libmtsocket.dll");

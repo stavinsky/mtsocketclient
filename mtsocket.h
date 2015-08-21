@@ -1,6 +1,6 @@
 #ifndef MTSOCKET_H
 #define MTSOCKET_H
-#include "client.h"
+#include "socket_client/client.h"
 
 extern "C" __declspec(dllexport) void mtconnect(const wchar_t *, const wchar_t *);
 extern "C" __declspec(dllexport) int get_data(wchar_t *);
