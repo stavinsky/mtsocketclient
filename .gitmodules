@@ -1,3 +1,6 @@
 [submodule "safequeue"]
 	path = safequeue
 	url = git@github.com:stavinsky/safe_queue.git
+[submodule "socket_client"]
+	path = socket_client
+	url = git@github.com:stavinsky/socket_client.git
