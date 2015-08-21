@@ -16,18 +16,23 @@ https://github.com/stavinsky/safe_queue
 
 
 Compilation:
---enable-threads=winpthreads
+
+```
 OS X:
 
 mkdir build
 cd build
 cmake -DCMAKE_TOOLCHAIN_FILE=mingw.txt ../
 make
-
+```
 
 MSYS2:
 
+```
 mkdir build
 cd build
 cmake -G"MSYS Makefiles" ../
 make
+```
+
+
