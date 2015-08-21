@@ -1,6 +1,7 @@
 #include <iostream>
 #include "windows.h"
 #include <string>
+#include "clogger/logger.h"
 
 typedef void(*Tmtconnect)( const wchar_t*,  const wchar_t *);
 typedef int(*Tget_data)(wchar_t * );
@@ -9,6 +10,10 @@ typedef void(*Tmtdisconnect)();
 
 int main()
 {
+
+
+
+
     HINSTANCE dllHandle = NULL;
     dllHandle = LoadLibrary("libmtsocket.dll");
     if (NULL != dllHandle)
